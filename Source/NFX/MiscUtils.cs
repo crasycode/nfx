@@ -603,6 +603,12 @@ namespace NFX
         return !string.IsNullOrEmpty(s);
     }
 
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static string AsFormat(this string source, params object[] prms)
+    {
+        return string.Format(source, prms);
+    }
+
     /// <summary>
     /// Helper function that calls string.IsNullOrWhiteSpace()
     /// </summary>

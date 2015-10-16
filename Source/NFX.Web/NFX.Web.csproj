@@ -69,6 +69,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -78,6 +79,38 @@
     <Compile Include="EMail\IMailer.cs" />
     <Compile Include="EMail\MailerSink.cs" />
     <Compile Include="EMail\SMTPMailerSink.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\DropBoxExceptionGenerator.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\DropBoxFileOperationRequestProvider.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\DropBoxFileStore.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\DropBoxMetadataRequestProvider.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\DropBoxMetadataStore.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\DropBoxUtils.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\Exception.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\Extensions.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DropBoxFile.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DropBoxObjectType.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DropBoxRequest.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DropBoxRootType.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DropBoxThumbnailFormatType.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DropBoxThumbnailSizeType.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DTO\DropBoxChunkFile.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DTO\DropBoxContentObjectMetadata.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DTO\DropBoxObject.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DTO\DropBoxObjectMetadata.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BO\DTO\DropBoxPhotoObjectMetadata.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Configurations\DropBoxAuthSettings.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Configurations\DropBoxFileSystemSessionConnectParams.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Configurations\DropBoxUrls.cs" />
+    <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileStream.cs" />
+    <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystem.cs" />
+    <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystemCapabilities.cs" />
+    <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystemSession.cs" />
+    <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystemStream.cs" />
+    <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxObjectHandler.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Http\DropBoxHttpExecuter.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Http\DropBoxLoader.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Http\DropBoxUploader.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Http\RequestExecuter.cs" />
     <Compile Include="MultiPartContent.cs" />
     <Compile Include="Pay\Account.cs" />
     <Compile Include="Pay\ActualAccountData.cs" />
