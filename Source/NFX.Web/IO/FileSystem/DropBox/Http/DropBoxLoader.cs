@@ -89,9 +89,9 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
                 }
                 catch
                 {
+                    --numberOfAttempts;
                     if (numberOfAttempts == 0)
                         throw;
-                    --numberOfAttempts;
                 }
                 Thread.Sleep(ThreadWaiteOnNextAttemptTime);
 
