@@ -43,9 +43,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
 
         public DropBoxObjectHandler(DropBoxObjectMetadata fileMetadata)
         {
-            if (fileMetadata == null)
-                IsExist = false;
-            else
+            if (fileMetadata != null)
             {
                 Path = fileMetadata.Path;
                 Name = fileMetadata.Name;
@@ -53,6 +51,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
                 Size = fileMetadata.Bytes;
                 ModifiedDate = DateTimeUtils.GetDateTimeFromString(fileMetadata.ModifiedDate);
                 CreatedDate = DateTimeUtils.GetDateTimeFromString(fileMetadata.CreatedDate);
+                IsExist = true;
             }
         }
 

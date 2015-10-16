@@ -58,18 +58,23 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
 
         public static string GetNameFromPath(string path)
         {
-            if (path.IsNullOrEmpty())
-                return null;
+            if (path.IsNullOrEmpty()) return String.Empty;
 
-            return path.Remove(0, path.LastIndexOf('/'));
+            if (!path.Contains("/")) return path;
+
+            return path.Remove(0, path.LastIndexOf('/') + 1);
         }
 
         public static string GetParentPathFromPath(string path)
         {
-            if (path.IsNullOrEmpty())
-                return null;
+            if (path.IsNullOrEmpty()) return String.Empty;
 
-            return path.Remove(path.LastIndexOf('/') + 1, path.Length -1);
+            if(!path.Contains("/")) return "";
+
+            int lastPosition = path.LastIndexOf('/');
+            if(lastPosition == 0) return "/";
+
+            return path.Remove(lastPosition, path.Length - lastPosition);
         }
 
         public static string CompinePath(params string[] parts)

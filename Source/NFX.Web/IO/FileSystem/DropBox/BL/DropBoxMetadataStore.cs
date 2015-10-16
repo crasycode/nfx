@@ -88,7 +88,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
             if (objects.Сhildren != null && objects.Сhildren.Length != 0)
             {
                 names.AddRange(objects.Сhildren.Where(f => f.IsDir == isDirectory)
-                                               .Select(obj => DropBoxPathUtils.GetNameFromPath(obj.Path))
+                                               .Select(obj => obj.Name)
                                                .ToList());
                 if (recursive)
                     foreach (DropBoxContentObjectMetadata folderMetadata in objects.Сhildren.Where(f => f.IsDir))

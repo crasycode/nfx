@@ -43,21 +43,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BO
 
         #region Public Properties
 
-        private Stream _stream;
-
-        public Stream Content
-        {
-            get { return _stream; }
-            set
-            {
-                if(value != null)
-                {
-                    byte[] temp = new byte[value.Length];
-                    value.Read(temp, 0, temp.Length);
-                    _stream = new MemoryStream(temp);
-                }
-            }
-        }
+        public Stream Content { get; set; }
 
         public StreamContent StreamContent
         {

@@ -121,6 +121,7 @@
     <Compile Include="IO\ChecksumsTests.cs" />
     <Compile Include="IO\BufferSegRStreamTests.cs" />
     <Compile Include="IO\FileSystem\DropBox\CommonTest.cs" />
+    <Compile Include="IO\FileSystem\DropBox\DropBoxPathUtilsTest.cs" />
     <Compile Include="IO\FileSystem\DropBox\TestDataHelper.cs" />
     <Compile Include="IO\FileSystem\S3\V4\SeparateLocalPathTest.cs" />
     <Compile Include="IO\LocalInstallationTests.cs" />

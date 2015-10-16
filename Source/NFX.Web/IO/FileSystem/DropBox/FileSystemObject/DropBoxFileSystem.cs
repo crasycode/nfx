@@ -116,22 +116,22 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
 
         protected internal override FileSystemFile DoCreateFile(FileSystemDirectory dir, string name, int size)
         {
-            DropBoxObjectMetadata dropBoxObjectMetadata = _fileStore.CreateFile(CombinePaths(dir.ParentPath, name), 5);
-            return new FileSystemFile(dir.Session, dropBoxObjectMetadata.Path,
-                                      DropBoxPathUtils.GetNameFromPath(dropBoxObjectMetadata.Path),
+            DropBoxObjectMetadata dropBoxObjectMetadata = _fileStore.CreateFile(CombinePaths(dir.Path, name), 5);
+            return new FileSystemFile(dir.Session, DropBoxPathUtils.GetParentPathFromPath(dropBoxObjectMetadata.Path),
+                                      dropBoxObjectMetadata.Name,
                                       new DropBoxObjectHandler(dropBoxObjectMetadata));
         }
 
         protected internal override FileSystemFile DoCreateFile(FileSystemDirectory dir, string name, string localFile, bool readOnly)
         {
-            DropBoxObjectMetadata file = _fileStore.CreateFile(CombinePaths(dir.ParentPath, name), localFile, 5);
+            DropBoxObjectMetadata file = _fileStore.CreateFile(CombinePaths(dir.Path, name), localFile, 5);
             DropBoxObjectHandler handler = new DropBoxObjectHandler(file);
             return new FileSystemFile(dir.Session, dir.Path, name, handler);
         }
         
         protected internal override FileSystemDirectory DoCreateDirectory(FileSystemDirectory dir, string name)
         {
-            DropBoxObjectMetadata file = _fileStore.CreateDirectory(dir.ParentPath, name, 5);
+            DropBoxObjectMetadata file = _fileStore.CreateDirectory(dir.Path, name, 5);
             DropBoxObjectHandler handler = new DropBoxObjectHandler(file);
             return new FileSystemDirectory(dir.Session, dir.Path, name, handler);
         }
