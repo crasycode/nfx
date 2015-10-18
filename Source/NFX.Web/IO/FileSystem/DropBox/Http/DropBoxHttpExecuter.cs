@@ -60,6 +60,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
                     catch
                     {
                         --numberOfAttempts;
+                        message = request.CloneRequest();
                         if (numberOfAttempts == 0)
                             throw;
                     }

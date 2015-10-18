@@ -77,19 +77,20 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
         {
             httpClient.DefaultRequestHeaders.Clear();
             httpClient.Timeout = new TimeSpan(0, 0, 0, request.RequestTimeout);
-            HttpRequestMessage mesage = request.ReturnAsHttpsRequestMessage();
+            HttpRequestMessage message = request.ReturnAsHttpsRequestMessage();
 
             do
             {
                 try
                 {
-                    HttpResponseMessage response = await httpClient.SendAsync(mesage, token).ConfigureAwait(false);
+                    HttpResponseMessage response = await httpClient.SendAsync(message, token).ConfigureAwait(false);
                     response.EnsureSuccessStatusCode();
                     return response;
                 }
                 catch
                 {
                     --numberOfAttempts;
+                    message = request.CloneRequest();
                     if (numberOfAttempts == 0)
                         throw;
                 }

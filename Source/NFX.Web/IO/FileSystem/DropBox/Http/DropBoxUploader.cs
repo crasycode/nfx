@@ -67,6 +67,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
                     catch
                     {
                         --numberOfAttempts;
+                        message = request.CloneRequest();
                         if (numberOfAttempts == 0)
                             throw;
                     }
@@ -102,16 +103,9 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
                         totalCountBytes += readByteCount;
                         request.ChageParameter("offset", totalCountBytes.ToString());
                         if (chunkUploadResult == null)
-                        {
-                            chunkUploadResult = SendFile(httpClient, buffer, request.ReturnAsHttpsRequestMessage(),
-                                                         numberOfAttempts, token);
-                        }
+                            chunkUploadResult = SendFile(httpClient, buffer, request,numberOfAttempts, token);
                         else
-                        {
-
-                            chunkUploadResult = SendFile(httpClient, buffer, request.ReturnAsHttpsRequestMessage(),
-                                                         numberOfAttempts, token);
-                        }
+                            chunkUploadResult = SendFile(httpClient, buffer, request, numberOfAttempts, token);
                     }
             }
             return chunkUploadResult;
@@ -121,12 +115,12 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
 
         #region Private Methods
 
-        private static JSONDataMap SendFile(HttpClient httpClient, byte[] bytes, HttpRequestMessage message,
+        private static JSONDataMap SendFile(HttpClient httpClient, byte[] bytes, DropBoxRequest request,
                                                       int numberOfAttempts, CancellationToken token)
         {
             if (bytes.Length == 0) return null;
             numberOfAttempts = numberOfAttempts <= 0 ? DefaultNumberOfAttempts : numberOfAttempts;
-
+            HttpRequestMessage message = request.ReturnAsHttpsRequestMessage();
             do
             {
                 try
@@ -139,13 +133,14 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
                 catch
                 {
                     --numberOfAttempts;
+                    message = request.CloneRequest();
                     if (numberOfAttempts == 0)
                         throw;
                 }
                 Thread.Sleep(ThreadWaiteOnNextAttemptTime);
 
             } while (numberOfAttempts > 0);
-
+            
             return null;
         }
 

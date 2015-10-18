@@ -153,6 +153,13 @@ namespace NFX.Web.IO.FileSystem.DropBox.BO
             return _httpMessage;
         }
 
+        public HttpRequestMessage CloneRequest()
+        {
+            HttpRequestMessage cloningMessage = ReturnAsHttpsRequestMessage();
+            HttpRequestMessage clonedMessage = new HttpRequestMessage(MethodName, cloningMessage.RequestUri);
+            cloningMessage.Headers.ForEach(h => clonedMessage.Headers.Add(h.Key, h.Value));
+            return clonedMessage;
+;        }
 
         #endregion
 
