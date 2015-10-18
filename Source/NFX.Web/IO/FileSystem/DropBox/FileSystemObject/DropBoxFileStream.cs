@@ -22,7 +22,6 @@
 
 using System;
 using System.IO;
-using NFX.Glue.Native;
 using NFX.IO.FileSystem;
 using NFX.Web.IO.FileSystem.DropBox.BL;
 using NFX.Web.IO.FileSystem.DropBox.BO;
@@ -56,27 +55,6 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
         }
 
         #endregion
-
-        private void DownloadFile()
-        {
-            if (_metadataStore.IsExist(_item.Path, 5))
-            {
-                using (DropBoxFile file = _fileStore.GetFile(_item.Path, 5))
-                {
-                    if (file.HasContent)
-                    {
-                        _stream = new MemoryStream(file.FileContent.ToArray(), 0, (int) file.FileContent.Length, true);
-                        _HasChanges = false;
-                    }
-                    else
-                    {
-                        _stream = new MemoryStream();
-                    }
-                }
-            }
-            else            
-                throw new NFXException("File is not exist. Need create file before use.");
-        }
 
         #region .ctor
 
@@ -154,6 +132,33 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
         {
             BufferStream.Write(buffer, offset, count);
             _HasChanges = true;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void DownloadFile()
+        {
+            if (_metadataStore.IsExist(_item.Path, 5))
+            {
+                using (DropBoxFile file = _fileStore.GetFile(_item.Path, 5))
+                {
+                    if (file.HasContent)
+                    {
+                        _stream = new MemoryStream();
+                        _stream.Write(file.FileContent.ToArray(), 0, (int)file.FileContent.Length);
+                        _stream.Position = 0;
+                        _HasChanges = false;
+                    }
+                    else
+                    {
+                        _stream = new MemoryStream();
+                    }
+                }
+            }
+            else
+                throw new NFXException("File is not exist. Need create file before use.");
         }
 
         #endregion

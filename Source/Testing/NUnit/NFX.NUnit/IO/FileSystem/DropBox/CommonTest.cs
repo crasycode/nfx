@@ -21,6 +21,7 @@
  */
 
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -115,6 +116,33 @@ namespace NFX.NUnit.IO.FileSystem.DropBox
                 st.Flush();
             }
             Assert.IsTrue(File.Exists(path));
+        }
+
+        [Test]
+        public void DB_ChangeFile()
+        {
+            const string defaultValue = "this is text before changes"; // from file
+            string testValue = " - 1111";
+            const string newValue = "this is text before changes - 1111";
+
+            FileSystemDirectory folder = TestDataHelper.GenerateRootFolder();
+            string p = Path.GetFullPath(@"IO\FileSystem\DropBox\TestData\test_change.txt");
+            folder.CreateFile("test_change.txt", p);
+            FileSystemFile loaded = folder.GetFile("test_change.txt");
+            Assert.IsNotNull(loaded);
+            Assert.IsNotNull(loaded.Path == "/test_change.txt");
+
+            byte[] utf8Value = Encoding.UTF8.GetBytes(defaultValue + testValue);
+            loaded.FileStream.Position = 0;
+            loaded.FileStream.Write(utf8Value, 0, utf8Value.Length);
+            loaded.FileStream.Flush();
+
+            FileSystemFile changedFile = folder.GetFile("test_change.txt");
+            Assert.IsNotNull(changedFile);
+            Assert.IsNotNull(changedFile.Path == "/test_change.txt");
+            string content2 = changedFile.ReadAllText();
+
+            Assert.IsTrue(newValue == content2);
         }
 
         [Test]

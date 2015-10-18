@@ -105,7 +105,6 @@
     <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystem.cs" />
     <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystemCapabilities.cs" />
     <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystemSession.cs" />
-    <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystemStream.cs" />
     <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxObjectHandler.cs" />
     <Compile Include="IO\FileSystem\DropBox\Http\DropBoxHttpExecuter.cs" />
     <Compile Include="IO\FileSystem\DropBox\Http\DropBoxLoader.cs" />

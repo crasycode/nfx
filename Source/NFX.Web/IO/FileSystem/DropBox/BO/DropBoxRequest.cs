@@ -47,7 +47,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BO
 
         public StreamContent StreamContent
         {
-            get { return CreateStream(); }
+            get { return CreateHttpContentStream(); }
         }
 
         public bool IsLargeContent
@@ -175,12 +175,14 @@ namespace NFX.Web.IO.FileSystem.DropBox.BO
             return string.Join("&", listOfParametrs);
         }
 
-        private StreamContent CreateStream()
+        private StreamContent CreateHttpContentStream()
         {
             if(Content == null)
-                return new StreamContent(new MemoryStream(new byte[0]), 1);
+                return new StreamContent(new MemoryStream());
 
-            return new StreamContent(Content, (int)ContentLength);
+            Content.Position = 0;
+            StreamContent sc = new StreamContent(Content, (int)ContentLength);
+            return sc;
         }
 
         #endregion
