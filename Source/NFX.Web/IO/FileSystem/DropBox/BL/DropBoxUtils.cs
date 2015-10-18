@@ -22,6 +22,8 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
+using System.Text;
 
 namespace NFX.Web.IO.FileSystem.DropBox.BL
 {
@@ -54,6 +56,12 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
 
     public static class DropBoxPathUtils
     {
+        #region Private Fields
+
+        private static readonly char[] NotAvailableSimbols = {'*', '|', '\\', ':', '"', '<', '>', '?' };
+
+        #endregion
+
         #region Methods
 
         public static string GetNameFromPath(string path)
@@ -77,16 +85,57 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
             return path.Remove(lastPosition, path.Length - lastPosition);
         }
 
-        public static string CompinePath(params string[] parts)
+        public static string Combine(params string[] parts)
         {
-            if(parts == null || parts.Length == 0)
+            if (parts == null || parts.Length == 0)
                 return string.Empty;
 
-            string fullPath = string.Join("/", parts).Replace("//", "/");
+            StringBuilder pathBuilder = new StringBuilder();
 
-            if (fullPath.StartsWith("/"))
-                return fullPath;
-            return fullPath.Insert(0, "/");
+            for (int idx = 0; idx < parts.Length; idx++)
+            {
+                string part = parts[idx];
+                if (part.IsNullOrEmpty())
+                    continue;
+
+                if (part.Length > 0 && pathBuilder.Length > 0 && pathBuilder[pathBuilder.Length - 1] != '/')
+                    pathBuilder.Append("/");
+
+                for (int i = 0; i < part.Length; i++)
+                {
+                    char charOfPart = part[i];
+                    if (pathBuilder.Length == 0 && charOfPart != '/')
+                        pathBuilder.Append(string.Format("{0}{1}", '/', charOfPart));
+                    else if (pathBuilder.Length > 0 && charOfPart == '/' &&
+                            (pathBuilder[pathBuilder.Length - 1] != '/' && i != part.Length - 1))
+                        pathBuilder.Append(charOfPart);
+                    else if (pathBuilder.Length > 0 && charOfPart != '/')
+                        pathBuilder.Append(charOfPart);
+                }
+            }
+
+            if (pathBuilder.Length > 0 && pathBuilder[pathBuilder.Length - 1] == '/')
+                return pathBuilder.Remove(pathBuilder.Length - 1, 1).ToString();
+
+            return pathBuilder.ToString();
+        }
+
+        public static bool IsValid(string path)
+        {
+            if (!path.IsNullOrEmpty())
+            {
+                return path.All(ch => !NotAvailableSimbols.Contains(ch));
+            }
+            return false;
+        }
+
+        public static bool IsValid(string[] partsOfPath)
+        {
+            if (partsOfPath != null && partsOfPath.Length > 0)
+            {
+                return partsOfPath.All(IsValid);
+            }
+            return false;
         }
 
         #endregion

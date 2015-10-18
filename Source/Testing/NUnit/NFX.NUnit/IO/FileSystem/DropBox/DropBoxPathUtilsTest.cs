@@ -29,7 +29,6 @@ namespace NFX.NUnit.IO.FileSystem.DropBox
     [TestFixture]
     public class DropBoxPathUtilsTest
     {
-
         [Test]
         public void GetParentPathFromPathTest()
         {
@@ -56,32 +55,66 @@ namespace NFX.NUnit.IO.FileSystem.DropBox
         [Test]
         public void CompinePathTest()
         {
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("") == "");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("123", "456") == "123/456");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("", "456") == "456");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123", "/456") == "123/456");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/", "/456/") == "123/456");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("123/", "456/") == "123/456/");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/", "123") == "/123");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/", "/123") == "/123");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/", "/123/") == "/123");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/", "123/") == "/123");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("123", "") == "/123");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("123", "/") == "/123");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("123/", "") == "/123");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123", "") == "/123");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/456", "") == "/123/456");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/456/", "") == "/123/456");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/456/", "789") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/456/", "/789") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/456/", "/789/") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/456/", "789/") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/456", "789/") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("/123/456", "/789/") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("123/456", "/789/") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("123/456/", "789/") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("123/456/", "/789") == "/123/456/789");
-            Assert.IsTrue(DropBoxPathUtils.CompinePath("//123//456//", "//789//") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("", "", "") == "");
+            Assert.IsTrue(DropBoxPathUtils.Combine(null, null, null) == "");
+            Assert.IsTrue(DropBoxPathUtils.Combine("") == "");
+            Assert.IsTrue(DropBoxPathUtils.Combine("123", "456") == "/123/456");
+            Assert.IsTrue(DropBoxPathUtils.Combine("", "456") == "/456");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123", "/456") == "/123/456");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/", "/456/") == "/123/456");
+            Assert.IsTrue(DropBoxPathUtils.Combine("123/", "456/") == "/123/456");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/", "123") == "/123");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/", "/123") == "/123");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/", "/123/") == "/123");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/", "123/") == "/123");
+            Assert.IsTrue(DropBoxPathUtils.Combine("123", "") == "/123");
+            Assert.IsTrue(DropBoxPathUtils.Combine("123", "/") == "/123");
+            Assert.IsTrue(DropBoxPathUtils.Combine("123/", "") == "/123");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123", "") == "/123");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456", "") == "/123/456");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456/", "") == "/123/456");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456/", "789") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456/", "/789") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456/", "/789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456/", "789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456", "789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456", "/789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("123/456", "/789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("123/456/", "789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("123/456/", "/789") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("//123//456//", "//789//") == "/123/456/789");
+
+            Assert.IsTrue(DropBoxPathUtils.Combine("//123/456/", "/789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123/456//", "789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/123//456", "789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("///123//456", "789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("///123///456", "//789/") == "/123/456/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("/////", "//789/") == "/789");
+            Assert.IsTrue(DropBoxPathUtils.Combine("//1///", "//////") == "/1");
+        }
+
+        [Test]
+        public void IsValidStringPath()
+        {
+            string valid = "/123/123";
+            string notValid = "/12*3/123";
+            string notValid2 = "/123/12>3";
+
+            Assert.IsTrue(DropBoxPathUtils.IsValid(valid));
+            Assert.IsFalse(DropBoxPathUtils.IsValid(notValid));
+            Assert.IsFalse(DropBoxPathUtils.IsValid(notValid2));
+        }
+
+        [Test]
+        public void IsValidParts()
+        {
+            string[] valid = {"/123/123", "65"};
+            string[] notValid = {"/12*3/123", "65"};
+            string[] notValid2 = {"/123/123", "6>5"};
+
+            Assert.IsTrue(DropBoxPathUtils.IsValid(valid));
+            Assert.IsFalse(DropBoxPathUtils.IsValid(notValid));
+            Assert.IsFalse(DropBoxPathUtils.IsValid(notValid2));
         }
     }
 }

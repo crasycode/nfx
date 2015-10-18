@@ -66,7 +66,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
         public DropBoxObjectMetadata CreateFile(string path, string name, Stream stream
                                                 , int numberOfAttempts, CancellationToken token = new CancellationToken())
         {
-            return Upload(stream, DropBoxPathUtils.CompinePath(path, name), numberOfAttempts, token);
+            return Upload(stream, DropBoxPathUtils.Combine(path, name), numberOfAttempts, token);
         }
 
         public DropBoxObjectMetadata CreateFile(string path, int numberOfAttempts,
@@ -90,7 +90,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
         public DropBoxObjectMetadata CreateDirectory(string path, string name
                                                                  ,int numberOfAttempts, CancellationToken token = new CancellationToken())
         {
-            return CreateFolder(DropBoxPathUtils.CompinePath(path, name), numberOfAttempts, token);
+            return CreateFolder(DropBoxPathUtils.Combine(path, name), numberOfAttempts, token);
         }
 
         public DropBoxObjectMetadata Delete(string path, int numberOfAttempts, CancellationToken token = new CancellationToken())

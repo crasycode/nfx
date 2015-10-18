@@ -27,7 +27,7 @@ using NFX.Web.IO.FileSystem.DropBox.FileSystemObject;
 
 namespace NFX.NUnit.IO.FileSystem.DropBox
 {
-    public static class TestDataHelper
+    internal static class TestDataHelper
     {
         public static string Auth = @"	
                                 root
