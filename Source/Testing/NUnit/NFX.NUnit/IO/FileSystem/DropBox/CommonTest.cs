@@ -22,6 +22,8 @@
 
 
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using NFX.IO.FileSystem;
 using NUnit.Framework;
 
@@ -93,27 +95,26 @@ namespace NFX.NUnit.IO.FileSystem.DropBox
         }
 
         [Test]
-        public void DB_CreateAndWriteToFile()
+        public void DB_CreateAndWriteToLocalFile()
         {
-//            FileSystemDirectory folder = TestDataHelper.GenerateRootFolder();
-//            FileSystemFile file = folder.CreateFile("notempty.txt");
-//            Assert.IsNotNull(file);
-//            Assert.IsTrue(file.Name == "notempty.txt");
-//            Assert.IsTrue(file.ParentPath == "/");
-//            Assert.IsTrue(file.Path == "/notempty.txt");
-//
-//            const string testValue = "test value";
-//            byte[] buff = Encoding.UTF8.GetBytes(testValue);
-//            file.FileStream.Write(buff, 0, buff.Length);
-//            file.FileStream.Flush();
-//
-//            FileSystemFile file2 = folder.GetFile("notempty.txt");
-//            Assert.IsTrue(file2.FileStream.Length == buff.Length);
-//            byte[] buff2 = new byte[buff.Length];
-//            file2.FileStream.Write(buff2, 0, (int)file2.FileStream.Length);
-//            string textFromFile = Encoding.UTF8.GetString(buff2);
-//
-//            Assert.IsTrue(testValue == textFromFile);
+            FileSystemDirectory folder = TestDataHelper.GenerateRootFolder();
+            string p = Path.GetFullPath(@"IO\FileSystem\DropBox\TestData\Adventures-of-Tom-Sawyer.pdf");
+            folder.CreateFile("blabla.pdf", p);
+            FileSystemFile loaded = folder.GetFile("blabla.pdf");
+            Assert.IsNotNull(loaded);
+            Assert.IsTrue(loaded.Name == "blabla.pdf");
+            Assert.IsTrue(loaded.Path == "/blabla.pdf");
+            Assert.IsTrue(loaded.FileStream.Length > 0);
+
+            string path = Path.GetFullPath(@"IO\FileSystem\DropBox\TestData\loaded.pdf");
+            using (FileStream st = File.Create(path))
+            {
+                byte[] buffer = new byte[loaded.FileStream.Length];
+                int readC = loaded.FileStream.Read(buffer, 0, buffer.Length);
+                st.Write(buffer, 0, readC);
+                st.Flush();
+            }
+            Assert.IsTrue(File.Exists(path));
         }
 
         [Test]

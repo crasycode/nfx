@@ -193,6 +193,8 @@ namespace NFX.Web
     public const string FS_SESSION_BAD_PARAMS_ERROR = 
       "Can not create an instance of file system session '{0}'. Make sure that suitable derivative of FileSystemSessionConnectParams is passed for the particular file system";
 
+    public const string FS_STREAM_BAD_TYPE_ERROR = "Can not create an instance of file system stream ";
+
     public const string DELETE_MODIFY_ERROR = "Can not modify field value while in deleting operation. Field <{0}>";
 
     public const string HTTP_OPERATION_ERROR = "HTTP[S] error: ";

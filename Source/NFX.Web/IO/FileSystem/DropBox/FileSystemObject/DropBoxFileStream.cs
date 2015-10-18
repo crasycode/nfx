@@ -21,9 +21,8 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using NFX.Glue.Native;
 using NFX.IO.FileSystem;
 using NFX.Web.IO.FileSystem.DropBox.BL;
 using NFX.Web.IO.FileSystem.DropBox.BO;
@@ -35,10 +34,10 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
         #region Private Fields
 
         private readonly DropBoxFileStore _fileStore;
+        private readonly DropBoxMetadataStore _metadataStore;
         private readonly FileSystemSessionItem _item;
         private MemoryStream _stream;
-        private readonly bool _isNewFile;
-        private bool _isChanged;
+        private bool _HasChanges;
 
         #endregion
 
@@ -48,27 +47,36 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
         {
             get
             {
-                if (!_isNewFile)
-                {
-                    DropBoxFile file = _fileStore.GetFile(_item.Path, 5);
-                    if (file.FileContent.Length > 0)
-                    {
-                        _stream = new MemoryStream(file.FileContent.ToArray(), 0, (int) file.FileContent.Length, true);
-                        _isChanged = false;
-
-                    }
-                }
                 if (_stream == null)
                 {
-                    _stream = new MemoryStream();
-                    _isChanged = false;
+                    DownloadFile();
                 }
-
                 return _stream;
             }
         }
 
         #endregion
+
+        private void DownloadFile()
+        {
+            if (_metadataStore.IsExist(_item.Path, 5))
+            {
+                using (DropBoxFile file = _fileStore.GetFile(_item.Path, 5))
+                {
+                    if (file.HasContent)
+                    {
+                        _stream = new MemoryStream(file.FileContent.ToArray(), 0, (int) file.FileContent.Length, true);
+                        _HasChanges = false;
+                    }
+                    else
+                    {
+                        _stream = new MemoryStream();
+                    }
+                }
+            }
+            else            
+                throw new NFXException("File is not exist. Need create file before use.");
+        }
 
         #region .ctor
 
@@ -76,14 +84,12 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
             : base(item, disposeAction)
         {
             DropBoxFileSystemSession session = item.Session as DropBoxFileSystemSession;
+            if(session == null)
+                throw new NFXException(StringConsts.FS_STREAM_BAD_TYPE_ERROR + GetType() + ".ctor_DropBoxFileSystemSession");
+
             _fileStore = new DropBoxFileStore(session.ConnectParameters);
-            var metadataStore = new DropBoxMetadataStore(session.ConnectParameters);
+            _metadataStore = new DropBoxMetadataStore(session.ConnectParameters);
             _item = item;
-            IEnumerable<string> names = metadataStore.GetObjectNames(DropBoxObjectType.File, item.ParentPath, false, 5);
-            if(names.IsNotEmpryOrNull())
-                _isNewFile =  names.FirstOrDefault(name => name == item.Name) == null;
-            else
-            _isNewFile = true;
         }
 
         #endregion
@@ -103,10 +109,10 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
 
         protected override void DoFlush()
         {
-            if (_isChanged)
+            if (_HasChanges)
             {
                 _fileStore.CreateFile(_item.ParentPath, _item.Name, BufferStream, 5);
-                _isChanged = false;
+                _HasChanges = false;
             }
         }
 
@@ -140,14 +146,14 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
             if (BufferStream.Length != value)
             {
                 BufferStream.SetLength(value);
-                _isChanged = true;
+                _HasChanges = true;
             }
         }
 
         protected override void DoWrite(byte[] buffer, int offset, int count)
         {
             BufferStream.Write(buffer, offset, count);
-            _isChanged = true;
+            _HasChanges = true;
         }
 
         #endregion

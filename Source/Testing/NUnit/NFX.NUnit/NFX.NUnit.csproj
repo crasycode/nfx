@@ -227,6 +227,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="IO\FileSystem\DropBox\TestData\Adventures-of-Tom-Sawyer.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="UTEZT-1.laconf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

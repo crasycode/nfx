@@ -82,7 +82,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.FileSystemObject
 
         protected internal override FileSystemSessionItem DoNavigate(FileSystemSession session, string path)
         {
-            if (_metadataStore.IsExist(path, false, 5))
+            if (_metadataStore.IsExist(path, 5))
             {
                 DropBoxObjectMetadata objectMetadata = _metadataStore.GetObjectMetadata(path, false, 5);
                 if(objectMetadata.IsDir)

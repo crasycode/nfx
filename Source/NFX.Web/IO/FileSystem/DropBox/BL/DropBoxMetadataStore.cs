@@ -64,12 +64,12 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
             return GetMetadata(path, withContent, numberOfAttempts, token);
         }
 
-        internal bool IsExist(string path, bool withContent, int numberOfAttempts,
+        internal bool IsExist(string path, int numberOfAttempts,
                                                  CancellationToken token = new CancellationToken())
         {
             try
             {
-                GetMetadata(path, withContent, numberOfAttempts, token);
+                GetMetadata(path, false, numberOfAttempts, token);
                 return true;
             }
             catch (Exception)

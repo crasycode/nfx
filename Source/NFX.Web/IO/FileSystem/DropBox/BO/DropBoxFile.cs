@@ -20,19 +20,32 @@
  * Author: Alexey Miheev <mihadev@yandex.ru>
  */
 
+using System;
 using System.IO;
 using NFX.Serialization.JSON;
 using NFX.Web.IO.FileSystem.DropBox.BO.DTO;
 
 namespace NFX.Web.IO.FileSystem.DropBox.BO
 {
-    public class DropBoxFile : DropBoxObjectMetadata
+    public class DropBoxFile : DropBoxObjectMetadata, IDisposable
     {
-        public MemoryStream FileContent { get; set; }
+        public MemoryStream FileContent { get; private set; }
+
+        public bool HasContent
+        {
+            get { return FileContent != null && FileContent.Length > 0; }
+        }
 
         public DropBoxFile(JSONDataMap dataMap, MemoryStream content) : base(dataMap)
         {
             FileContent = content;
+        }
+
+        public void Dispose()
+        {
+            if(HasContent)
+                FileContent.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
