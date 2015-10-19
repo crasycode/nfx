@@ -79,12 +79,12 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
                                                 ,int numberOfAttempts, CancellationToken token = new CancellationToken())
         {
             FileInfo fileInfo = new FileInfo(sourceFilePath);
-            if(fileInfo.Length > DropBoxRequest.DefaultFileMaxSizeBytes)
+//            if(fileInfo.Length > DropBoxRequest.DefaultFileMaxSizeBytes)
                 return ChunkUpload(sourceFilePath, destinationPath, numberOfAttempts, token);
-            using (Stream stream = fileInfo.OpenRead())
-            {
-                return Upload(stream, destinationPath, numberOfAttempts, token);
-            }
+//            using (Stream stream = fileInfo.OpenRead())
+//            {
+//                return Upload(stream, destinationPath, numberOfAttempts, token);
+//            }
         }
 
         public DropBoxObjectMetadata CreateDirectory(string path, string name

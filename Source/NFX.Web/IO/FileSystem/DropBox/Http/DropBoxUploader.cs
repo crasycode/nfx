@@ -60,19 +60,22 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
         {
             using (HttpClient httpClient = DropBoxHttpFactory.Create(request))
             {
-                byte[] buffer = new byte[DropBoxHttpRequestSettings.DataReadFromHDChunkSize];
+                byte[] buffer = new byte[DropBoxHttpRequestSettings.DiskDataBlockSizek];
                 JSONDataMap chunkUploadResult = null;
 
                 using (FileStream fileStream = new FileStream(request.ContentSourcePath, FileMode.Open, FileAccess.Read))
                 {
                     int numberOfBytes;
-                    while ((numberOfBytes = fileStream.Read(buffer, 0, DropBoxHttpRequestSettings.DataReadFromHDChunkSize)) > 0)
+                    while ((numberOfBytes = fileStream.Read(buffer, 0, DropBoxHttpRequestSettings.DiskDataBlockSizek)) > 0)
                     {
                         request.Content = new MemoryStream();
                         request.Content.Write(buffer, 0, numberOfBytes);
 
                         if (chunkUploadResult != null)
+                        {
                             request.ChageParameter("offset", chunkUploadResult["offset"].ToString());
+                            request.ChageParameter("upload_id", chunkUploadResult["upload_id"].ToString());
+                        }
 
                         chunkUploadResult = SendFile(httpClient, request, numberOfAttempts, token);
                     }

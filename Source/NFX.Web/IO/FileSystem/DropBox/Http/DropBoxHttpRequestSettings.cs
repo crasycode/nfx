@@ -27,6 +27,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
     {
         public static int DefaultNumberOfAttempts = 5;
         public static int ThreadWaiteOnNextAttemptTime = 3000; // 3 sec
-        public static int DataReadFromHDChunkSize = 4000; // 4 Kb;
+        public static int DiskDataBlockSizek = 4000; // 4 Kb;
+        public static int NetworkDataBlockSize = 4194304; // 4 Mb;
     }
 }
