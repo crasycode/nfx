@@ -21,10 +21,8 @@
 
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
-using System.Threading.Tasks;
 using NFX.Web.IO.FileSystem.DropBox.BL;
 using NFX.Web.IO.FileSystem.DropBox.BO;
 
@@ -34,8 +32,14 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
     {
         #region Private Fields
 
-        private const int DefaultNumberOfAttempts = 5;
-        private const int ThreadWaiteOnNextAttemptTime = 3000; // 3 sec
+        private static readonly Func<HttpClient, DropBoxRequest, int, CancellationToken, HttpResponseMessage> ExecuteAction =
+            delegate(HttpClient client, DropBoxRequest request, int numberOfAttempts, CancellationToken token)
+            {
+                HttpRequestMessage message = request.CreateHttpRequestMessage();
+                HttpResponseMessage response = client.SendAsync(message, token).Result;
+                response.EnsureSuccessStatusCode();
+                return response;
+            };
 
         #endregion
 
@@ -43,62 +47,11 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
 
         public static MemoryStream Load(DropBoxRequest request, int numberOfAttempts, CancellationToken token)
         {
-            numberOfAttempts = numberOfAttempts <= 0 ? DefaultNumberOfAttempts : numberOfAttempts;
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response = null;
-            MemoryStream content;
-
-            try
+            using (HttpClient httpClient = DropBoxHttpFactory.Create(request))
             {
-                response =  SendRequest(httpClient, request, numberOfAttempts, token).Result;
-                content =   response.Content.ReadToMemory();
+                HttpResponseMessage message = httpClient.RetryExecute(request, numberOfAttempts, token, ExecuteAction);
+                return message.Content.ReadToMemory();
             }
-            catch(Exception ex)
-            {
-                if(response != null)
-                    throw new DropBoxWebLoadException(response.StatusCode, ex);
-                throw new DropBoxWebLoadException(HttpStatusCode.InternalServerError, ex);
-            }
-            finally
-            {
-                httpClient.Dispose();
-                if(response != null)
-                    response.Dispose();
-            }
-            return content;
-        }
-
-        #endregion
-
-        #region Private Fields
-
-        private static async Task<HttpResponseMessage> SendRequest(HttpClient httpClient, DropBoxRequest request,
-            int numberOfAttempts, CancellationToken token)
-        {
-            httpClient.DefaultRequestHeaders.Clear();
-            httpClient.Timeout = new TimeSpan(0, 0, 0, request.RequestTimeout);
-            HttpRequestMessage message = request.ReturnAsHttpsRequestMessage();
-
-            do
-            {
-                try
-                {
-                    HttpResponseMessage response = await httpClient.SendAsync(message, token).ConfigureAwait(false);
-                    response.EnsureSuccessStatusCode();
-                    return response;
-                }
-                catch
-                {
-                    --numberOfAttempts;
-                    message = request.CloneRequest();
-                    if (numberOfAttempts == 0)
-                        throw;
-                }
-                Thread.Sleep(ThreadWaiteOnNextAttemptTime);
-
-            } while (numberOfAttempts > 0);
-
-            return null;
         }
 
         #endregion

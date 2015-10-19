@@ -37,7 +37,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
             StringBuilder additionallyMessage = new StringBuilder();
             additionallyMessage.Append(GetDescriptionByCode(code));
             additionallyMessage.AppendFormat(" Url: {0}; MethodName: {1}."
-                                             , request.ReturnAsHttpsRequestMessage().RequestUri
+                                             , request.CreateHttpRequestMessage().RequestUri
                                              , request.MethodName);
             if (originalException is HttpRequestException)
                 originalException = new HttpRequestException(originalException.Message, originalException);

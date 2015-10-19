@@ -33,42 +33,25 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
     {
         #region Private Fields
 
-        private const int DefaultNumberOfAttempts = 5;
-        private const int ThreadWaiteOnNextAttemptTime = 3000; // 3 sec
+        private static readonly Func<HttpClient, DropBoxRequest, int, CancellationToken, JSONDataMap> ExecuteAction =
+            delegate(HttpClient client, DropBoxRequest request, int numberOfAttempts, CancellationToken token)
+            {
+                HttpRequestMessage message = request.CreateHttpRequestMessage();
+                HttpResponseMessage response = client.SendAsync(message, token).Result;
+                response.EnsureSuccessStatusCode();
+                return response.Content.DeserializeToJsonDataMap();
+            };
 
         #endregion
 
         #region Public Methods
 
-        public static JSONDataMap ExecuteAsync(DropBoxRequest request
-                                              , int numberOfAttempts, CancellationToken token)
+        public static JSONDataMap ExecuteAsync(DropBoxRequest request, int numberOfAttempts, CancellationToken token)
         {
-            numberOfAttempts = numberOfAttempts <= 0 ? DefaultNumberOfAttempts : numberOfAttempts;
-            using (HttpClient httpClient = new HttpClient())
+            using (HttpClient httpClient = DropBoxHttpFactory.Create(request))
             {
-                httpClient.DefaultRequestHeaders.Clear();
-                httpClient.Timeout = new TimeSpan(0, 0, 0, request.RequestTimeout);
-                HttpRequestMessage message = request.ReturnAsHttpsRequestMessage();
-                do
-                {
-                    try
-                    {
-                        HttpResponseMessage response = httpClient.SendAsync(message, token).Result;
-                        response.EnsureSuccessStatusCode();
-                        return response.Content.DeserializeToJsonDataMap();
-                    }
-                    catch
-                    {
-                        --numberOfAttempts;
-                        message = request.CloneRequest();
-                        if (numberOfAttempts == 0)
-                            throw;
-                    }
-                    Thread.Sleep(ThreadWaiteOnNextAttemptTime);
-
-                } while (numberOfAttempts > 0);
+                return httpClient.RetryExecute(request, numberOfAttempts, token, ExecuteAction);
             }
-            return null;
         }
 
         #endregion

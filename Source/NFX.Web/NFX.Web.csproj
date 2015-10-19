@@ -85,7 +85,7 @@
     <Compile Include="IO\FileSystem\DropBox\BL\DropBoxMetadataRequestProvider.cs" />
     <Compile Include="IO\FileSystem\DropBox\BL\DropBoxMetadataStore.cs" />
     <Compile Include="IO\FileSystem\DropBox\BL\DropBoxUtils.cs" />
-    <Compile Include="IO\FileSystem\DropBox\BL\Exception.cs" />
+    <Compile Include="IO\FileSystem\DropBox\BL\DropBoxException.cs" />
     <Compile Include="IO\FileSystem\DropBox\BL\Extensions.cs" />
     <Compile Include="IO\FileSystem\DropBox\BO\DropBoxFile.cs" />
     <Compile Include="IO\FileSystem\DropBox\BO\DropBoxObjectType.cs" />
@@ -107,9 +107,12 @@
     <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxFileSystemSession.cs" />
     <Compile Include="IO\FileSystem\DropBox\FileSystemObject\DropBoxObjectHandler.cs" />
     <Compile Include="IO\FileSystem\DropBox\Http\DropBoxHttpExecuter.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Http\DropBoxHttpFactory.cs" />
     <Compile Include="IO\FileSystem\DropBox\Http\DropBoxLoader.cs" />
     <Compile Include="IO\FileSystem\DropBox\Http\DropBoxUploader.cs" />
-    <Compile Include="IO\FileSystem\DropBox\Http\RequestExecuter.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Http\DropBoxHttpExtension.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Http\DropBoxHttpRequestSettings.cs" />
+    <Compile Include="IO\FileSystem\DropBox\Http\DropBoxRequestExecuter.cs" />
     <Compile Include="MultiPartContent.cs" />
     <Compile Include="Pay\Account.cs" />
     <Compile Include="Pay\ActualAccountData.cs" />

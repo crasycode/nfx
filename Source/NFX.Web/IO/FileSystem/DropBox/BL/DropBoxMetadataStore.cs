@@ -148,7 +148,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
                                                        CancellationToken token = default(CancellationToken))
         {
             DropBoxRequest request = _metadataRequestProvider.CreateMetadataRequest(path, list: withContent.ToString());
-            JSONDataMap dataMap = RequestExecuter.Execute(request, numberOfAttempts, token);
+            JSONDataMap dataMap = DropBoxRequestExecuter.Execute(request, numberOfAttempts, token);
             return new DropBoxObjectMetadata(dataMap);
         }
 

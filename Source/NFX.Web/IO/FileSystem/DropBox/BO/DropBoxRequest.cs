@@ -43,6 +43,8 @@ namespace NFX.Web.IO.FileSystem.DropBox.BO
 
         #region Public Properties
 
+        public string ContentSourcePath { get; set; }
+
         public Stream Content { get; set; }
 
         public StreamContent StreamContent
@@ -101,14 +103,13 @@ namespace NFX.Web.IO.FileSystem.DropBox.BO
 
         public int RequestTimeout
         {
-            get { return _requestTimeout; }
-            set
+            get
             {
-                if (value <= 0)
-                    _requestTimeout = DefaultRequestTimeout;
-                else
-                    _requestTimeout = value;
-            } 
+                if(_requestTimeout <= 0)
+                    return DefaultRequestTimeout;
+                return _requestTimeout;
+            }
+            set { _requestTimeout = value; }
         }
 
         #endregion
@@ -145,21 +146,15 @@ namespace NFX.Web.IO.FileSystem.DropBox.BO
             _httpMessage.Headers.Add(key, new[] {value});
         }
 
-        public HttpRequestMessage ReturnAsHttpsRequestMessage()
+        public HttpRequestMessage CreateHttpRequestMessage()
         {
             string requests = PrepareRequestParameters();
-            if (requests != null)
-                _httpMessage.RequestUri = new Uri(string.Format("{0}?{1}", _httpMessage.RequestUri, requests));
-            return _httpMessage;
-        }
+            HttpRequestMessage message = new HttpRequestMessage(MethodName
+                                             , new Uri(string.Format("{0}?{1}", _httpMessage.RequestUri, requests)));
+            _httpMessage.Headers.ForEach(h => message.Headers.Add(h.Key, h.Value));
 
-        public HttpRequestMessage CloneRequest()
-        {
-            HttpRequestMessage cloningMessage = ReturnAsHttpsRequestMessage();
-            HttpRequestMessage clonedMessage = new HttpRequestMessage(MethodName, cloningMessage.RequestUri);
-            cloningMessage.Headers.ForEach(h => clonedMessage.Headers.Add(h.Key, h.Value));
-            return clonedMessage;
-;        }
+            return message;
+        }
 
         #endregion
 

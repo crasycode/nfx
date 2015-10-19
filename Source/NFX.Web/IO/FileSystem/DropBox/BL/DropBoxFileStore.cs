@@ -76,7 +76,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
         }
 
         public DropBoxObjectMetadata CreateFile(string destinationPath, string sourceFilePath
-                                                            ,int numberOfAttempts, CancellationToken token = new CancellationToken())
+                                                ,int numberOfAttempts, CancellationToken token = new CancellationToken())
         {
             FileInfo fileInfo = new FileInfo(sourceFilePath);
             if(fileInfo.Length > DropBoxRequest.DefaultFileMaxSizeBytes)
@@ -108,7 +108,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
                 throw new ArgumentException("Value cannot be empty or null", "path");
 
             DropBoxRequest request = _operationRequestProvider.CreateDeleteRequest(DropBoxRootType.DropBox, path);
-            JSONDataMap jsonDataMap = RequestExecuter.Execute(request, numberOfAttempts, token);
+            JSONDataMap jsonDataMap = DropBoxRequestExecuter.Execute(request, numberOfAttempts, token);
             return new DropBoxObjectMetadata(jsonDataMap);
         }
 
@@ -118,7 +118,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
                 throw new ArgumentException("Value cannot be empty or null", "path");
 
             DropBoxRequest request = _operationRequestProvider.CreateFolderRequest(DropBoxRootType.DropBox, path);
-            JSONDataMap jsonDataMap = RequestExecuter.Execute(request, numberOfAttempts, token);
+            JSONDataMap jsonDataMap = DropBoxRequestExecuter.Execute(request, numberOfAttempts, token);
             return new DropBoxContentObjectMetadata(jsonDataMap);
         }
 
@@ -128,7 +128,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
                 throw new ArgumentException("Value cannot be empty or null", "path");
 
             DropBoxRequest request = _operationRequestProvider.CreateDownloadRequest(path);
-            return RequestExecuter.ExecuteDownload(request, numberOfAttempts, token);
+            return DropBoxRequestExecuter.ExecuteDownload(request, numberOfAttempts, token);
         }
 
         private DropBoxObjectMetadata Upload(Stream content, string path, int numberOfAttempts, CancellationToken token = default(CancellationToken))
@@ -140,7 +140,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
                 throw new FileSystemException("The file size should not exceed 150 megabytes. Use chunk upload");
 
             DropBoxRequest request = _operationRequestProvider.CreateUploadRequest(content, path);
-            JSONDataMap response = RequestExecuter.ExecuteUpload(request, numberOfAttempts, token);
+            JSONDataMap response = DropBoxRequestExecuter.ExecuteUpload(request, numberOfAttempts, token);
             return new DropBoxContentObjectMetadata(response);
         }
 
@@ -154,7 +154,8 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
                 throw new ArgumentException("Value cannot be empty or null", "destinationPath");
 
             DropBoxRequest request = _operationRequestProvider.CreateChunkUploadRequest(null);
-            JSONDataMap response = RequestExecuter.ExecuteChunkUpload(request, sourceFilePath, numberOfAttempts, token);
+            request.ContentSourcePath = sourceFilePath;
+            JSONDataMap response = DropBoxRequestExecuter.ExecuteChunkUpload(request, numberOfAttempts, token);
             DropBoxChunkFile endChunk = new DropBoxChunkFile(response);
             return CommitChunkUpload(destinationPath, endChunk.UploadId, numberOfAttempts, token);
         }
@@ -165,7 +166,7 @@ namespace NFX.Web.IO.FileSystem.DropBox.BL
                 throw new ArgumentException("Value cannot be empty or null", "path");
 
             DropBoxRequest request = _operationRequestProvider.CreateCommitChunkUploadRequest(path, uploadId);
-            JSONDataMap response = RequestExecuter.Execute(request, numberOfAttempts, token);
+            JSONDataMap response = DropBoxRequestExecuter.Execute(request, numberOfAttempts, token);
             return new DropBoxContentObjectMetadata(response);
         }
 

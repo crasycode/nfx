@@ -29,7 +29,7 @@ using NFX.Web.IO.FileSystem.DropBox.BO;
 
 namespace NFX.Web.IO.FileSystem.DropBox.Http
 {
-    internal static class RequestExecuter
+    internal static class DropBoxRequestExecuter
     {
         #region Public Methods
 
@@ -65,13 +65,12 @@ namespace NFX.Web.IO.FileSystem.DropBox.Http
             }
         }
 
-        public static JSONDataMap ExecuteChunkUpload(DropBoxRequest request, string sourceFile
-                                                                 , int numberOfAttempts
-                                                                 , CancellationToken token = new CancellationToken())
+        public static JSONDataMap ExecuteChunkUpload(DropBoxRequest request, int numberOfAttempts
+                                                     , CancellationToken token = new CancellationToken())
         {
             try
             {
-                return DropBoxHttpUploader.ChunkUpload(request, sourceFile, numberOfAttempts, token);
+                return DropBoxHttpUploader.ChunkUpload(request, numberOfAttempts, token);
             }
             catch (Exception ex)
             {
